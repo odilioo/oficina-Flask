@@ -47,9 +47,8 @@
             </div>
             <div class="col-md-4 mb-3">
               <label>Modelo:</label>
-              <select name="modelo" id="modelo" class="form-control" required>
-                <option value="">Selecione o modelo</option>
-              </select>
+              <input list="modelos" name="modelo" id="modelo" class="form-control" required>
+              <datalist id="modelos"></datalist>
             </div>
           </div>
           <div class="row">
@@ -201,14 +200,13 @@
 
   function updateModelos() {
     const marca = document.getElementById('marca').value;
-    const modeloSelect = document.getElementById('modelo');
-    modeloSelect.innerHTML = '<option value="">Selecione o modelo</option>';
+    const modeloDataList = document.getElementById('modelos');
+    modeloDataList.innerHTML = '';
     if (modelosPorMarca[marca]) {
       modelosPorMarca[marca].forEach(function(modelo) {
         const option = document.createElement('option');
         option.value = modelo;
-        option.text = modelo;
-        modeloSelect.add(option);
+        modeloDataList.appendChild(option);
       });
     }
   }
