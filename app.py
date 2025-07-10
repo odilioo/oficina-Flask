@@ -26,9 +26,27 @@ def init_db():
 
 @app.route('/')
 def index():
+    id_filtro = request.args.get('id')
+    modelo_filtro = request.args.get('modelo')
+    servico_filtro = request.args.get('servico')
+
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM ordens')
+
+    query = 'SELECT * FROM ordens WHERE 1=1'
+    params = []
+
+    if id_filtro:
+        query += ' AND id = ?'
+        params.append(id_filtro)
+    if modelo_filtro:
+        query += ' AND modelo LIKE ?'
+        params.append(f'%{modelo_filtro}%')
+    if servico_filtro:
+        query += ' AND servico LIKE ?'
+        params.append(f'%{servico_filtro}%')
+
+    cursor.execute(query, params)
     ordens = cursor.fetchall()
     conn.close()
     return render_template('index.html', ordens=ordens)
