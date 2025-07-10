@@ -68,7 +68,6 @@ def excluir_os(id):
     conn.close()
     return redirect(url_for('index'))
 
-# Rota para editar uma ordem de serviço
 @app.route('/editar_os/<int:id>', methods=['GET', 'POST'])
 def editar_os(id):
     conn = sqlite3.connect('database.db')
@@ -95,6 +94,17 @@ def editar_os(id):
         ordem = cursor.fetchone()
         conn.close()
         return render_template('editar.html', ordem=ordem)
+
+
+# Nova rota para impressão de ordem de serviço
+@app.route('/imprimir_os/<int:id>')
+def imprimir_os(id):
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM ordens WHERE id = ?', (id,))
+    ordem = cursor.fetchone()
+    conn.close()
+    return render_template('imprimir.html', ordem=ordem)
 
 if __name__ == '__main__':
     init_db()
