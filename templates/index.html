@@ -24,7 +24,7 @@
             </div>
             <div class="col-md-4 mb-3">
               <label>Marca:</label>
-              <select name="marca" class="form-control" required>
+              <select name="marca" id="marca" class="form-control" required onchange="updateModelos()">
                 <option value="">Selecione a marca</option>
                 <option value="Ford">Ford</option>
                 <option value="Chevrolet">Chevrolet</option>
@@ -33,19 +33,18 @@
                 <option value="Toyota">Toyota</option>
                 <option value="Hyundai">Hyundai</option>
                 <option value="Honda">Honda</option>
+                <!-- Marcas de caminhões -->
+                <option value="Mercedes-Benz">Mercedes-Benz</option>
+                <option value="Scania">Scania</option>
+                <option value="Volvo">Volvo</option>
+                <option value="Iveco">Iveco</option>
+                <option value="MAN">MAN</option>
               </select>
             </div>
             <div class="col-md-4 mb-3">
               <label>Modelo:</label>
-              <select name="modelo" class="form-control" required>
+              <select name="modelo" id="modelo" class="form-control" required>
                 <option value="">Selecione o modelo</option>
-                <option value="Uno">Uno</option>
-                <option value="Ka">Ka</option>
-                <option value="Gol">Gol</option>
-                <option value="Corolla">Corolla</option>
-                <option value="HB20">HB20</option>
-                <option value="Civic">Civic</option>
-                <option value="Onix">Onix</option>
               </select>
             </div>
           </div>
@@ -148,6 +147,37 @@
     </div>
   </div>
 
+</div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const modelosPorMarca = {
+    "Ford": ["Ka", "F-250", "Cargo"],
+    "Chevrolet": ["Onix", "S10", "D20"],
+    "Fiat": ["Uno", "Strada"],
+    "Volkswagen": ["Gol", "Delivery", "Constellation"],
+    "Toyota": ["Corolla", "Hilux"],
+    "Hyundai": ["HB20"],
+    "Honda": ["Civic"],
+    "Mercedes-Benz": ["Actros", "Atego", "Accelo"],
+    "Scania": ["R450", "P310"],
+    "Volvo": ["FH", "FMX"],
+    "Iveco": ["Daily", "Tector"],
+    "MAN": ["TGX", "TGS"]
+  };
+
+  function updateModelos() {
+    const marca = document.getElementById('marca').value;
+    const modeloSelect = document.getElementById('modelo');
+    modeloSelect.innerHTML = '<option value="">Selecione o modelo</option>';
+    if (modelosPorMarca[marca]) {
+      modelosPorMarca[marca].forEach(function(modelo) {
+        const option = document.createElement('option');
+        option.value = modelo;
+        option.text = modelo;
+        modeloSelect.add(option);
+      });
+    }
+  }
+</script>
 </body>
 </html>
