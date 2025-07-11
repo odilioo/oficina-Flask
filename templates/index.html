@@ -69,34 +69,6 @@
           </div>
           <!-- Campos adicionais inspirados nas telas compartilhadas -->
           <div class="row">
-            <div class="col-md-4 mb-3">
-              <label>Chassi:</label>
-              <input type="text" name="chassi" class="form-control">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Nº Motor:</label>
-              <input type="text" name="nro_motor" class="form-control">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Renavam:</label>
-              <input type="text" name="renavam" class="form-control">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label>Cor:</label>
-              <input type="text" name="cor" class="form-control">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>KM:</label>
-              <input type="number" name="km" class="form-control">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Portas:</label>
-              <input type="number" name="portas" class="form-control">
-            </div>
-          </div>
-          <div class="row">
             <div class="col-md-12 mb-3">
               <label>Comentário:</label>
               <textarea name="comentario" class="form-control" rows="2"></textarea>
@@ -196,6 +168,7 @@
                 <th>Cliente/Razão Social</th>
                 <th>CPF/CNPJ</th>
                 <th>Serviço</th>
+                <th>Comentário</th>
                 <th>Valor</th>
                 <th>Ações</th>
               </tr>
@@ -212,6 +185,7 @@
                   <td>{{ ordem[6] }}</td>
                   <td>{{ ordem[7] }}</td>
                   <td>{{ ordem[8] }}</td>
+                  <td>{{ ordem[10] }}</td>
                   <td>R${{ ordem[9] }}</td>
                   <td class="text-center">
                     <a href="/editar_os/{{ ordem[0] }}" class="btn btn-sm btn-outline-warning">Editar</a>
@@ -221,7 +195,7 @@
                 </tr>
               {% else %}
                 <tr>
-                  <td colspan="11" class="text-center">Nenhuma ordem cadastrada ainda.</td>
+                  <td colspan="12" class="text-center">Nenhuma ordem cadastrada ainda.</td>
                 </tr>
               {% endfor %}
             </tbody>
