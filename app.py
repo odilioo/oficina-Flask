@@ -1,28 +1,16 @@
-import sqlite3
+import psycopg2
 from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
-# Inicializa banco de dados e tabela ordens se não existir
-def init_db():
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS ordens (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            placa TEXT,
-            marca TEXT,
-            modelo TEXT,
-            ano TEXT,
-            combustivel TEXT,
-            cliente TEXT,
-            cpf_cnpj TEXT,
-            servico TEXT,
-            valor REAL
-        )
-    ''')
-    conn.commit()
-    conn.close()
+def get_connection():
+    return psycopg2.connect(
+        host="dpg-dio51bripnbc7386fi0g-a",
+        database="oficina_db_47y2",
+        user="oficina_db_47y2_user",
+        password="PU5eZvc0fGJq49Hz7drIHOccGUw1v314",
+        port=5432
+    )
 
 @app.route('/')
 def index():
@@ -30,20 +18,20 @@ def index():
     modelo_filtro = request.args.get('modelo')
     servico_filtro = request.args.get('servico')
 
-    conn = sqlite3.connect('database.db')
+    conn = get_connection()
     cursor = conn.cursor()
 
     query = 'SELECT * FROM ordens WHERE 1=1'
     params = []
 
     if id_filtro:
-        query += ' AND id = ?'
+        query += ' AND id = %s'
         params.append(id_filtro)
     if modelo_filtro:
-        query += ' AND modelo LIKE ?'
+        query += ' AND modelo LIKE %s'
         params.append(f'%{modelo_filtro}%')
     if servico_filtro:
-        query += ' AND servico LIKE ?'
+        query += ' AND servico LIKE %s'
         params.append(f'%{servico_filtro}%')
 
     cursor.execute(query, params)
@@ -63,12 +51,12 @@ def nova_os():
     servico = request.form['servico']
     valor = request.form['valor']
 
-    conn = sqlite3.connect('database.db')
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('''
         INSERT INTO ordens 
         (placa, marca, modelo, ano, combustivel, cliente, cpf_cnpj, servico, valor)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
     ''', (placa, marca, modelo, ano, combustivel, cliente, cpf_cnpj, servico, valor))
     conn.commit()
     conn.close()
@@ -79,16 +67,16 @@ def nova_os():
 # Rota para excluir uma ordem de serviço
 @app.route('/excluir_os/<int:id>')
 def excluir_os(id):
-    conn = sqlite3.connect('database.db')
+    conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM ordens WHERE id = ?', (id,))
+    cursor.execute('DELETE FROM ordens WHERE id = %s', (id,))
     conn.commit()
     conn.close()
     return redirect(url_for('index'))
 
 @app.route('/editar_os/<int:id>', methods=['GET', 'POST'])
 def editar_os(id):
-    conn = sqlite3.connect('database.db')
+    conn = get_connection()
     cursor = conn.cursor()
     if request.method == 'POST':
         placa = request.form['placa']
@@ -101,14 +89,14 @@ def editar_os(id):
         servico = request.form['servico']
         valor = request.form['valor']
         cursor.execute('''
-            UPDATE ordens SET placa=?, marca=?, modelo=?, ano=?, combustivel=?, cliente=?, cpf_cnpj=?, servico=?, valor=?
-            WHERE id=?
+            UPDATE ordens SET placa=%s, marca=%s, modelo=%s, ano=%s, combustivel=%s, cliente=%s, cpf_cnpj=%s, servico=%s, valor=%s
+            WHERE id=%s
         ''', (placa, marca, modelo, ano, combustivel, cliente, cpf_cnpj, servico, valor, id))
         conn.commit()
         conn.close()
         return redirect(url_for('index'))
     else:
-        cursor.execute('SELECT * FROM ordens WHERE id = ?', (id,))
+        cursor.execute('SELECT * FROM ordens WHERE id = %s', (id,))
         ordem = cursor.fetchone()
         conn.close()
         return render_template('editar.html', ordem=ordem)
@@ -117,13 +105,12 @@ def editar_os(id):
 # Nova rota para impressão de ordem de serviço
 @app.route('/imprimir_os/<int:id>')
 def imprimir_os(id):
-    conn = sqlite3.connect('database.db')
+    conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM ordens WHERE id = ?', (id,))
+    cursor.execute('SELECT * FROM ordens WHERE id = %s', (id,))
     ordem = cursor.fetchone()
     conn.close()
     return render_template('imprimir.html', ordem=ordem)
 
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True)
