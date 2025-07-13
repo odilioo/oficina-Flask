@@ -50,23 +50,15 @@ def nova_os():
     cpf_cnpj = request.form['cpf_cnpj']
     servico = request.form['servico']
     valor = request.form['valor']
-    chassi = request.form['chassi']
-    nro_motor = request.form['nro_motor']
-    renavam = request.form['renavam']
-    cor = request.form['cor']
-    km = request.form['km']
-    portas = request.form['portas']
     comentario = request.form['comentario']
 
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('''
         INSERT INTO ordens 
-        (placa, marca, modelo, ano, combustivel, cliente, cpf_cnpj, servico, valor,
-         chassi, nro_motor, renavam, cor, km, portas, comentario)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    ''', (placa, marca, modelo, ano, combustivel, cliente, cpf_cnpj, servico, valor,
-          chassi, nro_motor, renavam, cor, km, portas, comentario))
+        (placa, marca, modelo, ano, combustivel, cliente, cpf_cnpj, servico, valor, comentario)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    ''', (placa, marca, modelo, ano, combustivel, cliente, cpf_cnpj, servico, valor, comentario))
     conn.commit()
     conn.close()
 
@@ -97,19 +89,11 @@ def editar_os(id):
         cpf_cnpj = request.form['cpf_cnpj']
         servico = request.form['servico']
         valor = request.form['valor']
-        chassi = request.form['chassi']
-        nro_motor = request.form['nro_motor']
-        renavam = request.form['renavam']
-        cor = request.form['cor']
-        km = request.form['km']
-        portas = request.form['portas']
         comentario = request.form['comentario']
         cursor.execute('''
-            UPDATE ordens SET placa=%s, marca=%s, modelo=%s, ano=%s, combustivel=%s, cliente=%s, cpf_cnpj=%s, servico=%s, valor=%s,
-            chassi=%s, nro_motor=%s, renavam=%s, cor=%s, km=%s, portas=%s, comentario=%s
+            UPDATE ordens SET placa=%s, marca=%s, modelo=%s, ano=%s, combustivel=%s, cliente=%s, cpf_cnpj=%s, servico=%s, valor=%s, comentario=%s
             WHERE id=%s
-        ''', (placa, marca, modelo, ano, combustivel, cliente, cpf_cnpj, servico, valor,
-              chassi, nro_motor, renavam, cor, km, portas, comentario, id))
+        ''', (placa, marca, modelo, ano, combustivel, cliente, cpf_cnpj, servico, valor, comentario, id))
         conn.commit()
         conn.close()
         return redirect(url_for('index'))
