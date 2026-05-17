@@ -1,245 +1,322 @@
-<!doctype html>
-<html lang="pt-br">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Centro Automotivo de Recuperação de Peça Nacional e Importada - Cadastro de O.S.</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="container p-2 p-md-4" style="background: url('/static/logo.jpg') no-repeat center center fixed; background-size: cover;">
-  <header class="mb-4">
-    <h1 class="text-center text-primary">Centro Automotivo de Recuperação de Peça Nacional e Importada</h1>
-  </header>
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
 
-  <div style="background-color: rgba(255, 255, 255, 0.8); border-radius: 12px; padding: 16px;">
-    <div class="card mb-4" style="background-color: rgba(255, 255, 255, 0.85); border-radius: 8px;">
-      <div class="card-header bg-primary text-white">Novo Cadastro</div>
-      <div class="card-body">
-        <form action="/nova_os" method="post">
-          <h5>Dados do Veículo</h5>
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label>Placa:</label>
-              <input type="text" name="placa" class="form-control" required>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Marca:</label>
-              <select name="marca" id="marca" class="form-control" required onchange="updateModelos()">
-                <option value="">Selecione a marca</option>
-                <option value="Ford">Ford</option>
-                <option value="Chevrolet">Chevrolet</option>
-                <option value="Fiat">Fiat</option>
-                <option value="Volkswagen">Volkswagen</option>
-                <option value="Toyota">Toyota</option>
-                <option value="Hyundai">Hyundai</option>
-                <option value="Honda">Honda</option>
-                <option value="Mercedes-Benz">Mercedes-Benz</option>
-                <option value="Scania">Scania</option>
-                <option value="Volvo">Volvo</option>
-                <option value="Iveco">Iveco</option>
-                <option value="MAN">MAN</option>
-                <option value="Renault">Renault</option>
-                <option value="Peugeot">Peugeot</option>
-                <option value="Citroën">Citroën</option>
-                <option value="Kia">Kia</option>
-                <option value="JAC Motors">JAC Motors</option>
-              </select>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Modelo:</label>
-              <input list="modelos" name="modelo" id="modelo" class="form-control" required>
-              <datalist id="modelos"></datalist>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label>Ano/Fab/Mod:</label>
-              <input type="text" name="ano" class="form-control">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Combustível:</label>
-              <select name="combustivel" class="form-control">
-                <option value="">Selecione</option>
-                <option value="Gasolina">Gasolina</option>
-                <option value="Etanol">Etanol</option>
-                <option value="Diesel">Diesel</option>
-                <option value="Flex">Flex</option>
-              </select>
-            </div>
-          </div>
-          <!-- Campos adicionais inspirados nas telas compartilhadas -->
-          <div class="row">
-            <div class="col-md-12 mb-3">
-              <label>Comentário:</label>
-              <textarea name="comentario" class="form-control" rows="2"></textarea>
-            </div>
-          </div>
+{% block content %}
+<!-- Topbar -->
+<div class="topbar">
+  <h5><i class="bi bi-speedometer2 me-2"></i>Dashboard — Ordens de Serviço</h5>
+  <span class="text-muted small">Centro Automotivo de Recuperação de Peça Nacional e Importada</span>
+</div>
 
-          <h5>Dados do Cliente</h5>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label>Cliente/Razão Social:</label>
-              <input type="text" name="cliente" class="form-control" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>CPF/CNPJ:</label>
-              <input type="text" name="cpf_cnpj" class="form-control">
-            </div>
-          </div>
-
-          <h5>Serviço</h5>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label>Serviço:</label>
-              <input list="servicos" name="servico" class="form-control" required>
-              <datalist id="servicos">
-                <option value="Troca de óleo e filtro">
-                <option value="Troca de fluidos (arrefecimento, transmissão, freio)">
-                <option value="Substituição de velas de ignição e cabos">
-                <option value="Inspeção de correias e tensionadores">
-                <option value="Revisão de sistemas elétricos e eletrônicos">
-                <option value="Reparação de motor e transmissão">
-                <option value="Substituição de componentes defeituosos">
-                <option value="Reparação de sistemas de suspensão e direção">
-                <option value="Substituição de embreagem">
-                <option value="Reparação de sistemas de freio">
-                <option value="Diagnóstico e reparação de problemas elétricos">
-                <option value="Instalação e reparação de sistemas de iluminação">
-                <option value="Instalação de sistemas de som e multimídia">
-                <option value="Manutenção e recarga de sistemas de ar-condicionado">
-                <option value="Reparação de sistemas de arrefecimento">
-                <option value="Alinhamento de rodas">
-                <option value="Balanceamento de pneus e rodas">
-                <option value="Uso de scanners automotivos para identificar problemas">
-                <option value="Leitura e redefinição de códigos de erro (check engine)">
-                <option value="Inspeção veicular">
-                <option value="Emissão de certificados de inspeção">
-                <option value="Instalação de kits de elevação/rebaixamento">
-                <option value="Personalização de rodas e pneus">
-                <option value="Instalação de acessórios">
-                <option value="Reparação de amassados e arranhões">
-                <option value="Soldagem de partes estruturais">
-                <option value="Troca de pastilhas e discos de freio">
-                <option value="Sangria do sistema de freio">
-                <option value="Substituição de amortecedores e molas">
-              </datalist>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>Valor:</label>
-              <input type="number" step="0.01" name="valor" class="form-control" required>
-            </div>
-          </div>
-
-          <div class="text-end">
-            <button type="submit" class="btn btn-success">Salvar OS</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <form method="get" action="/" class="mb-3 row g-2">
-      <div class="col-md-3">
-        <input type="text" name="id" class="form-control" placeholder="Filtrar por ID">
-      </div>
-      <div class="col-md-3">
-        <input type="text" name="modelo" class="form-control" placeholder="Filtrar por Modelo">
-      </div>
-      <div class="col-md-3">
-        <input type="text" name="servico" class="form-control" placeholder="Filtrar por Serviço">
-      </div>
-      <div class="col-md-3">
-        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-      </div>
-    </form>
-
-    <div class="card" style="background-color: rgba(255, 255, 255, 0.85); border-radius: 8px;">
-      <div class="card-header bg-secondary text-white">Ordens cadastradas</div>
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-sm table-hover table-bordered mb-0">
-            <thead class="table-dark text-center">
-              <tr>
-                <th>ID</th>
-                <th>Placa</th>
-                <th>Marca</th>
-                <th>Modelo</th>
-                <th>Ano/Fab/Mod</th>
-                <th>Combustível</th>
-                <th>Cliente/Razão Social</th>
-                <th>CPF/CNPJ</th>
-                <th>Serviço</th>
-                <th>Comentário</th>
-                <th>Valor</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for ordem in ordens %}
-                <tr>
-                  <td>{{ ordem[0] }}</td>
-                  <td>{{ ordem[1] }}</td>
-                  <td>{{ ordem[2] }}</td>
-                  <td>{{ ordem[3] }}</td>
-                  <td>{{ ordem[4] }}</td>
-                  <td>{{ ordem[5] }}</td>
-                  <td>{{ ordem[6] }}</td>
-                  <td>{{ ordem[7] }}</td>
-                  <td>{{ ordem[8] }}</td>
-                  <td>{{ ordem[10] }}</td>
-                  <td>R${{ ordem[9] }}</td>
-                  <td class="text-center">
-                    <a href="/editar_os/{{ ordem[0] }}" class="btn btn-sm btn-outline-warning">Editar</a>
-                    <a href="/excluir_os/{{ ordem[0] }}" class="btn btn-sm btn-outline-danger">Excluir</a>
-                    <a href="/imprimir_os/{{ ordem[0] }}" class="btn btn-sm btn-outline-primary">Imprimir</a>
-                  </td>
-                </tr>
-              {% else %}
-                <tr>
-                  <td colspan="12" class="text-center">Nenhuma ordem cadastrada ainda.</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+<!-- Stats row -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="icon" style="background:#e8f0fe"><i class="bi bi-card-list text-primary"></i></div>
+      <div>
+        <div class="label">Total de O.S.</div>
+        <div class="value">{{ stats.total }}</div>
       </div>
     </div>
   </div>
-
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="icon" style="background:#fff3cd"><i class="bi bi-hourglass-split" style="color:#856404"></i></div>
+      <div>
+        <div class="label">Abertas</div>
+        <div class="value">{{ stats.abertas }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="icon" style="background:#cfe2ff"><i class="bi bi-tools" style="color:#084298"></i></div>
+      <div>
+        <div class="label">Em andamento</div>
+        <div class="value">{{ stats.andamento }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="icon" style="background:#d1e7dd"><i class="bi bi-check-circle-fill" style="color:#0a3622"></i></div>
+      <div>
+        <div class="label">Concluídas</div>
+        <div class="value">{{ stats.concluidas }}</div>
+      </div>
+    </div>
+  </div>
 </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  const modelosPorMarca = {
-    "Ford": ["Ka", "F-250", "Cargo"],
-    "Chevrolet": ["Onix", "S10", "D20"],
-    "Fiat": ["Uno", "Strada"],
-    "Volkswagen": ["Gol", "Delivery", "Constellation"],
-    "Toyota": ["Corolla", "Hilux"],
-    "Hyundai": ["HB20"],
-    "Honda": ["Civic"],
-    "Mercedes-Benz": ["Actros", "Atego", "Accelo"],
-    "Scania": ["R450", "P310"],
-    "Volvo": ["FH", "FMX"],
-    "Iveco": ["Daily", "Tector"],
-    "MAN": ["TGX", "TGS"],
-    "Renault": ["Duster", "Master"],
-    "Peugeot": ["Partner", "Boxer"],
-    "Citroën": ["Jumper", "Jumpy"],
-    "Kia": ["Bongo"],
-    "JAC Motors": ["V260", "T40"]
-  };
 
-  function updateModelos() {
-    const marca = document.getElementById('marca').value;
-    const modeloDataList = document.getElementById('modelos');
-    modeloDataList.innerHTML = '';
-    if (modelosPorMarca[marca]) {
-      modelosPorMarca[marca].forEach(function(modelo) {
-        const option = document.createElement('option');
-        option.value = modelo;
-        modeloDataList.appendChild(option);
-      });
-    }
-  }
+<div class="row g-3 mb-4">
+  <div class="col-12 col-md-4">
+    <div class="stat-card">
+      <div class="icon" style="background:#f8d7da"><i class="bi bi-currency-dollar" style="color:#842029"></i></div>
+      <div>
+        <div class="label">Receita Total</div>
+        <div class="value">R$ {{ "%.2f"|format(stats.receita) }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New OS form -->
+<div id="nova-os" class="table-card p-4 mb-4">
+  <h6 class="section-title"><i class="bi bi-plus-circle me-1"></i>Nova Ordem de Serviço</h6>
+  <form action="/nova_os" method="post">
+
+    <p class="section-title">Dados do Veículo</p>
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Placa</label>
+        <input type="text" name="placa" class="form-control" required placeholder="ABC-1234">
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Marca</label>
+        <select name="marca" id="marca" class="form-select" required onchange="updateModelos()">
+          <option value="">Selecione</option>
+          <option>Ford</option><option>Chevrolet</option><option>Fiat</option>
+          <option>Volkswagen</option><option>Toyota</option><option>Hyundai</option>
+          <option>Honda</option><option>Mercedes-Benz</option><option>Scania</option>
+          <option>Volvo</option><option>Iveco</option><option>MAN</option>
+          <option>Renault</option><option>Peugeot</option><option>Citroën</option>
+          <option>Kia</option><option>JAC Motors</option>
+        </select>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Modelo</label>
+        <input list="modelos" name="modelo" id="modelo" class="form-control" required>
+        <datalist id="modelos"></datalist>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Ano Fab/Mod</label>
+        <input type="text" name="ano" class="form-control" placeholder="2020/2021">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Combustível</label>
+        <select name="combustivel" class="form-select">
+          <option value="">Selecione</option>
+          <option>Gasolina</option><option>Etanol</option><option>Diesel</option><option>Flex</option>
+        </select>
+      </div>
+      <div class="col-md-9 mb-3">
+        <label class="form-label">Comentário</label>
+        <input type="text" name="comentario" class="form-control" placeholder="Observações sobre o veículo...">
+      </div>
+    </div>
+
+    <p class="section-title">Dados do Cliente</p>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Cliente / Razão Social</label>
+        <input type="text" name="cliente" class="form-control" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">CPF / CNPJ</label>
+        <input type="text" name="cpf_cnpj" class="form-control">
+      </div>
+    </div>
+
+    <p class="section-title">Serviço</p>
+    <div class="row">
+      <div class="col-md-5 mb-3">
+        <label class="form-label">Serviço</label>
+        <input list="servicos" name="servico" class="form-control" required>
+        <datalist id="servicos">
+          <option value="Troca de óleo e filtro">
+          <option value="Troca de fluidos (arrefecimento, transmissão, freio)">
+          <option value="Substituição de velas de ignição e cabos">
+          <option value="Inspeção de correias e tensionadores">
+          <option value="Revisão de sistemas elétricos e eletrônicos">
+          <option value="Reparação de motor e transmissão">
+          <option value="Substituição de componentes defeituosos">
+          <option value="Reparação de sistemas de suspensão e direção">
+          <option value="Substituição de embreagem">
+          <option value="Reparação de sistemas de freio">
+          <option value="Diagnóstico e reparação de problemas elétricos">
+          <option value="Instalação e reparação de sistemas de iluminação">
+          <option value="Manutenção e recarga de sistemas de ar-condicionado">
+          <option value="Reparação de sistemas de arrefecimento">
+          <option value="Alinhamento de rodas">
+          <option value="Balanceamento de pneus e rodas">
+          <option value="Uso de scanners automotivos para identificar problemas">
+          <option value="Leitura e redefinição de códigos de erro (check engine)">
+          <option value="Inspeção veicular">
+          <option value="Troca de pastilhas e discos de freio">
+          <option value="Sangria do sistema de freio">
+          <option value="Substituição de amortecedores e molas">
+        </datalist>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Valor (R$)</label>
+        <input type="number" step="0.01" name="valor" class="form-control" required placeholder="0,00">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select" required>
+          {% for s in status_options %}
+            <option value="{{ s }}">{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary px-4">
+        <i class="bi bi-save me-1"></i>Salvar O.S.
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Filters -->
+<div class="filter-card">
+  <form method="get" action="/">
+    <div class="row g-2 align-items-end">
+      <div class="col-6 col-md-2">
+        <label class="form-label small mb-1">ID</label>
+        <input type="text" name="id" class="form-control form-control-sm" value="{{ filtros.get('id','') }}">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label small mb-1">Modelo</label>
+        <input type="text" name="modelo" class="form-control form-control-sm" value="{{ filtros.get('modelo','') }}">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label small mb-1">Cliente</label>
+        <input type="text" name="cliente" class="form-control form-control-sm" value="{{ filtros.get('cliente','') }}">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label small mb-1">Serviço</label>
+        <input type="text" name="servico" class="form-control form-control-sm" value="{{ filtros.get('servico','') }}">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label small mb-1">Status</label>
+        <select name="status" class="form-select form-select-sm">
+          <option value="">Todos</option>
+          {% for s in status_options %}
+            <option value="{{ s }}" {% if filtros.get('status') == s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-6 col-md-1">
+        <label class="form-label small mb-1">De</label>
+        <input type="date" name="data_inicio" class="form-control form-control-sm" value="{{ filtros.get('data_inicio','') }}">
+      </div>
+      <div class="col-6 col-md-1">
+        <label class="form-label small mb-1">Até</label>
+        <input type="date" name="data_fim" class="form-control form-control-sm" value="{{ filtros.get('data_fim','') }}">
+      </div>
+      <div class="col-12 col-md-auto d-flex gap-2 mt-1">
+        <button type="submit" class="btn btn-primary btn-sm px-3">
+          <i class="bi bi-search me-1"></i>Filtrar
+        </button>
+        <a href="/" class="btn btn-outline-secondary btn-sm">Limpar</a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Table -->
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Placa</th>
+          <th>Marca / Modelo</th>
+          <th>Ano</th>
+          <th>Cliente</th>
+          <th>Serviço</th>
+          <th>Valor</th>
+          <th>Data</th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in ordens %}
+          {% set status = o[11] if o|length > 11 else 'Aberta' %}
+          {% if status == 'Aberta' %}
+            {% set badge_class = 'badge-aberta' %}
+          {% elif status == 'Em andamento' %}
+            {% set badge_class = 'badge-andamento' %}
+          {% else %}
+            {% set badge_class = 'badge-concluida' %}
+          {% endif %}
+          <tr>
+            <td><strong>#{{ o[0] }}</strong></td>
+            <td><span class="badge {{ badge_class }} px-2 py-1 rounded-pill">{{ status }}</span></td>
+            <td><code>{{ o[1] }}</code></td>
+            <td>{{ o[2] }} {{ o[3] }}</td>
+            <td>{{ o[4] }}</td>
+            <td>{{ o[6] }}</td>
+            <td class="text-truncate" style="max-width:180px" title="{{ o[8] }}">{{ o[8] }}</td>
+            <td><strong>R$ {{ "%.2f"|format(o[9]|float) }}</strong></td>
+            <td class="text-muted small">
+              {% if o|length > 12 and o[12] %}
+                {{ o[12].strftime('%d/%m/%Y') }}
+              {% else %}—{% endif %}
+            </td>
+            <td class="text-center">
+              <a href="/editar_os/{{ o[0] }}" class="btn btn-sm btn-outline-warning me-1" title="Editar">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <form method="post" action="/excluir_os/{{ o[0] }}" class="d-inline"
+                    onsubmit="return confirm('Excluir O.S. #{{ o[0] }}?')">
+                <button type="submit" class="btn btn-sm btn-outline-danger me-1" title="Excluir">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+              <a href="/imprimir_os/{{ o[0] }}" class="btn btn-sm btn-outline-secondary" title="Imprimir">
+                <i class="bi bi-printer"></i>
+              </a>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="10" class="text-center py-4 text-muted">
+              <i class="bi bi-inbox fs-4 d-block mb-1"></i>Nenhuma ordem encontrada.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const modelosPorMarca = {
+  "Ford": ["Ka","Fiesta","Focus","Fusion","EcoSport","Edge","Territory","F-250","F-4000","Cargo"],
+  "Chevrolet": ["Onix","Prisma","Cruze","Tracker","S10","D20","Blazer"],
+  "Fiat": ["Uno","Palio","Siena","Strada","Toro","Argo","Cronos","Ducato"],
+  "Volkswagen": ["Gol","Polo","Virtus","T-Cross","Tiguan","Delivery","Constellation","Meteor"],
+  "Toyota": ["Corolla","Yaris","Hilux","SW4","RAV4","Camry"],
+  "Hyundai": ["HB20","HB20S","Creta","Tucson","Santa Fe","HR"],
+  "Honda": ["Civic","City","Fit","HR-V","CR-V"],
+  "Mercedes-Benz": ["Actros","Atego","Accelo","Axor","Sprinter","Vito"],
+  "Scania": ["R450","R500","P310","P360","G410"],
+  "Volvo": ["FH","FM","FMX","VM"],
+  "Iveco": ["Daily","Tector","Stralis","Hi-Way"],
+  "MAN": ["TGX","TGS","TGM","TGL"],
+  "Renault": ["Duster","Kwid","Sandero","Logan","Master","Kangoo"],
+  "Peugeot": ["208","2008","3008","5008","Partner","Boxer"],
+  "Citroën": ["C3","C4","Aircross","Jumper","Jumpy"],
+  "Kia": ["Sportage","Sorento","Bongo"],
+  "JAC Motors": ["V260","T40","T60","iEV"]
+};
+
+function updateModelos(selectEl, datalistId) {
+  const marca = selectEl ? selectEl.value : document.getElementById('marca').value;
+  const dl = document.getElementById(datalistId || 'modelos');
+  dl.innerHTML = '';
+  (modelosPorMarca[marca] || []).forEach(m => {
+    const o = document.createElement('option'); o.value = m; dl.appendChild(o);
+  });
+}
 </script>
-</body>
-</html>
+{% endblock %}

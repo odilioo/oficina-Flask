@@ -1,57 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}Editar O.S. #{{ ordem[0] }}{% endblock %}
 
+{% block content %}
+<div class="topbar">
+  <h5><i class="bi bi-pencil-square me-2"></i>Editar Ordem de Serviço <span class="text-muted">#{{ ordem[0] }}</span></h5>
+  <a href="/" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
+</div>
 
-<!doctype html>
-<html lang="pt-br">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Editar Ordem de Serviço</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="container py-4">
-  <h1>Editar Ordem de Serviço</h1>
-
+<div class="table-card p-4">
   <form action="/editar_os/{{ ordem[0] }}" method="post">
-    <div class="mb-3">
-      <label>Placa:</label>
-      <input type="text" name="placa" class="form-control" value="{{ ordem[1] }}">
-    </div>
-    <div class="mb-3">
-      <label>Marca:</label>
-      <input type="text" name="marca" class="form-control" value="{{ ordem[2] }}">
-    </div>
-    <div class="mb-3">
-      <label>Modelo:</label>
-      <input type="text" name="modelo" class="form-control" value="{{ ordem[3] }}">
-    </div>
-    <div class="mb-3">
-      <label>Ano/Fab/Mod:</label>
-      <input type="text" name="ano" class="form-control" value="{{ ordem[4] }}">
-    </div>
-    <div class="mb-3">
-      <label>Combustível:</label>
-      <input type="text" name="combustivel" class="form-control" value="{{ ordem[5] }}">
-    </div>
-    <div class="mb-3">
-      <label>Cliente/Razão Social:</label>
-      <input type="text" name="cliente" class="form-control" value="{{ ordem[6] }}">
-    </div>
-    <div class="mb-3">
-      <label>CPF/CNPJ:</label>
-      <input type="text" name="cpf_cnpj" class="form-control" value="{{ ordem[7] }}">
-    </div>
-    <div class="mb-3">
-      <label>Serviço:</label>
-      <input type="text" name="servico" class="form-control" value="{{ ordem[8] }}">
-    </div>
-    <div class="mb-3">
-      <label>Valor:</label>
-      <input type="number" step="0.01" name="valor" class="form-control" value="{{ ordem[9] }}">
-    </div>
-    <button type="submit" class="btn btn-success">Salvar Alterações</button>
-    <a href="/" class="btn btn-secondary">Cancelar</a>
-  </form>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <p class="section-title">Dados do Veículo</p>
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Placa</label>
+        <input type="text" name="placa" class="form-control" value="{{ ordem[1] }}" required>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Marca</label>
+        <select name="marca" id="marca" class="form-select" required onchange="updateModelos(this)">
+          <option value="">Selecione</option>
+          {% for m in ['Ford','Chevrolet','Fiat','Volkswagen','Toyota','Hyundai','Honda',
+                       'Mercedes-Benz','Scania','Volvo','Iveco','MAN','Renault','Peugeot',
+                       'Citroën','Kia','JAC Motors'] %}
+            <option value="{{ m }}" {% if ordem[2] == m %}selected{% endif %}>{{ m }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Modelo</label>
+        <input list="modelos" name="modelo" id="modelo" class="form-control" value="{{ ordem[3] }}" required>
+        <datalist id="modelos"></datalist>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Ano Fab/Mod</label>
+        <input type="text" name="ano" class="form-control" value="{{ ordem[4] }}">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Combustível</label>
+        <select name="combustivel" class="form-select">
+          {% for c in ['Gasolina','Etanol','Diesel','Flex'] %}
+            <option value="{{ c }}" {% if ordem[5] == c %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-9 mb-3">
+        <label class="form-label">Comentário</label>
+        <input type="text" name="comentario" class="form-control" value="{{ ordem[10] if ordem|length > 10 else '' }}">
+      </div>
+    </div>
+
+    <p class="section-title">Dados do Cliente</p>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Cliente / Razão Social</label>
+        <input type="text" name="cliente" class="form-control" value="{{ ordem[6] }}" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">CPF / CNPJ</label>
+        <input type="text" name="cpf_cnpj" class="form-control" value="{{ ordem[7] }}">
+      </div>
+    </div>
+
+    <p class="section-title">Serviço</p>
+    <div class="row">
+      <div class="col-md-5 mb-3">
+        <label class="form-label">Serviço</label>
+        <input list="servicos" name="servico" class="form-control" value="{{ ordem[8] }}" required>
+        <datalist id="servicos">
+          <option value="Troca de óleo e filtro">
+          <option value="Troca de fluidos (arrefecimento, transmissão, freio)">
+          <option value="Substituição de velas de ignição e cabos">
+          <option value="Inspeção de correias e tensionadores">
+          <option value="Revisão de sistemas elétricos e eletrônicos">
+          <option value="Reparação de motor e transmissão">
+          <option value="Substituição de embreagem">
+          <option value="Reparação de sistemas de freio">
+          <option value="Diagnóstico e reparação de problemas elétricos">
+          <option value="Manutenção e recarga de sistemas de ar-condicionado">
+          <option value="Alinhamento de rodas">
+          <option value="Balanceamento de pneus e rodas">
+          <option value="Troca de pastilhas e discos de freio">
+          <option value="Substituição de amortecedores e molas">
+        </datalist>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Valor (R$)</label>
+        <input type="number" step="0.01" name="valor" class="form-control" value="{{ ordem[9] }}" required>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select" required>
+          {% for s in status_options %}
+            <option value="{{ s }}" {% if (ordem[11] if ordem|length > 11 else 'Aberta') == s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 justify-content-end mt-2">
+      <a href="/" class="btn btn-outline-secondary"><i class="bi bi-x me-1"></i>Cancelar</a>
+      <button type="submit" class="btn btn-success px-4">
+        <i class="bi bi-check-lg me-1"></i>Salvar Alterações
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const modelosPorMarca = {
+  "Ford": ["Ka","Fiesta","Focus","EcoSport","Territory","F-250","F-4000","Cargo"],
+  "Chevrolet": ["Onix","Prisma","Cruze","Tracker","S10","D20","Blazer"],
+  "Fiat": ["Uno","Palio","Siena","Strada","Toro","Argo","Cronos","Ducato"],
+  "Volkswagen": ["Gol","Polo","Virtus","T-Cross","Tiguan","Delivery","Constellation"],
+  "Toyota": ["Corolla","Yaris","Hilux","SW4","RAV4"],
+  "Hyundai": ["HB20","HB20S","Creta","Tucson","Santa Fe","HR"],
+  "Honda": ["Civic","City","Fit","HR-V","CR-V"],
+  "Mercedes-Benz": ["Actros","Atego","Accelo","Axor","Sprinter"],
+  "Scania": ["R450","R500","P310","P360","G410"],
+  "Volvo": ["FH","FM","FMX","VM"],
+  "Iveco": ["Daily","Tector","Stralis"],
+  "MAN": ["TGX","TGS","TGM","TGL"],
+  "Renault": ["Duster","Kwid","Sandero","Logan","Master"],
+  "Peugeot": ["208","2008","3008","Partner","Boxer"],
+  "Citroën": ["C3","C4","Aircross","Jumper"],
+  "Kia": ["Sportage","Sorento","Bongo"],
+  "JAC Motors": ["V260","T40","T60"]
+};
+
+function updateModelos(selectEl) {
+  const marca = selectEl ? selectEl.value : document.getElementById('marca').value;
+  const dl = document.getElementById('modelos');
+  dl.innerHTML = '';
+  (modelosPorMarca[marca] || []).forEach(m => {
+    const o = document.createElement('option'); o.value = m; dl.appendChild(o);
+  });
+}
+
+// Populate datalist on load for current marca
+updateModelos(document.getElementById('marca'));
+</script>
+{% endblock %}
