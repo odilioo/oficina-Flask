@@ -12,6 +12,9 @@ STATUS_OPTIONS = ['Aberta', 'Em andamento', 'Concluída']
 
 
 def get_connection():
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        return psycopg2.connect(database_url)
     return psycopg2.connect(
         host=os.environ.get('DB_HOST'),
         database=os.environ.get('DB_NAME'),
